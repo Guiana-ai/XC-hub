@@ -1,37 +1,138 @@
-if game.PlaceId == 3623096087 then
+-- XC Elite Hub Script
+-- Credits: Cody (Owner of the script) | Selling (Owner of the server)
+print("XC Elite Hub - Created by Cody & Selling")
 
-loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+-- Load SmoothLib
+local SmoothLib = {}
 
-local Window = Rayfield:CreateWindow({
-   Name = "GP Hub x XC hub",
-   Icon = 0, -- Icon in Topbar. Can use Lucide Icons (string) or Roblox Image (number). 0 to use no icon (default).
-   LoadingTitle = "Example Hub",
-   LoadingSubtitle = "by Sirius",
-   Theme = "Default", -- Check https://docs.sirius.menu/rayfield/configuration/themes
+-- Creates a Cinematic Intro Screen
+function SmoothLib:CreateIntroScreen()
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
-   DisableRayfieldPrompts = false,
-   DisableBuildWarnings = false, -- Prevents Rayfield from warning when the script has a version mismatch with the interface
+    local IntroFrame = Instance.new("Frame")
+    IntroFrame.Parent = ScreenGui
+    IntroFrame.Size = UDim2.new(1, 0, 1, 0)
+    IntroFrame.Position = UDim2.new(0, 0, 0, 0)
+    IntroFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 
-   ConfigurationSaving = {
-      Enabled = false,
-      FolderName = nil, -- Create a custom folder for your hub/game
-      FileName = "XC hub"
-   },
+    local IntroText = Instance.new("TextLabel")
+    IntroText.Parent = IntroFrame
+    IntroText.Size = UDim2.new(1, 0, 0.2, 0)
+    IntroText.Position = UDim2.new(0, 0, 0.4, 0)
+    IntroText.Text = "XC Elite Hub"
+    IntroText.Font = Enum.Font.GothamBold
+    IntroText.TextScaled = true
+    IntroText.TextColor3 = Color3.fromRGB(255, 215, 0)
+    IntroText.BackgroundTransparency = 1
 
-   Discord = {
-      Enabled = true, -- Prompt the user to join your Discord server if their executor supports it
-      Invite = "", -- The Discord invite code, do not include discord.gg/. E.g. discord.gg/ ABCD would be ABCD
-      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
-   },
+    -- Intro Fade-Out Animation
+    task.spawn(function()
+        wait(2)  -- Intro screen duration
+        for i = 1, 10 do
+            IntroFrame.BackgroundTransparency = IntroFrame.BackgroundTransparency + 0.1
+            wait(0.05)
+        end
+        ScreenGui:Destroy()  -- Remove intro after fade-out
+    end)
+end
 
-   KeySystem = true, -- Set this to true to use our key system
-   KeySettings = {
-      Title = "GP hub key",
-      Subtitle = "Key System",
-      Note = "Get key from discord server", -- Use this to tell the user how to get a key
-      FileName = "Key", -- It is recommended to use something unique as other scripts using Rayfield may overwrite your key file
-      SaveKey = true, -- The user's key will be saved, but if you change the key, they will be unable to use your script
-      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
-      Key = {"pastebin.com/Y7VHYaRN"} -- List of keys that will be accepted by the system, can be RAW file links (pastebin, github etc) or simple strings ("hello","key22")
-   }
-})
+-- Creates a new UI Window with animation
+function SmoothLib:CreateWindow(title)
+    local ScreenGui = Instance.new("ScreenGui")
+    ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+
+    local MainFrame = Instance.new("Frame")
+    MainFrame.Parent = ScreenGui
+    MainFrame.Size = UDim2.new(0.4, 0, 0.5, 0)
+    MainFrame.Position = UDim2.new(0.3, 0, 0.25, 0)
+    MainFrame.BackgroundTransparency = 1 -- Starts invisible for fade-in animation
+    MainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+
+    -- Smooth Corners
+    local UICorner = Instance.new("UICorner")
+    UICorner.CornerRadius = UDim.new(0, 18)
+    UICorner.Parent = MainFrame
+
+    -- Title Label
+    local TitleLabel = Instance.new("TextLabel")
+    TitleLabel.Parent = MainFrame
+    TitleLabel.Size = UDim2.new(1, 0, 0.12, 0)
+    TitleLabel.Text = title
+    TitleLabel.Font = Enum.Font.GothamBold
+    TitleLabel.TextScaled = true
+    TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    TitleLabel.BackgroundTransparency = 1
+
+    -- Fade-In Animation
+    task.spawn(function()
+        for i = 1, 10 do
+            MainFrame.BackgroundTransparency = MainFrame.BackgroundTransparency - 0.1
+            wait(0.05)
+        end
+    end)
+
+    return MainFrame
+end
+
+-- Creates a button with animation
+function SmoothLib:CreateButton(parent, buttonText, callback, positionIndex)
+    if not parent then
+        print("Error: Parent UI missing!")
+        return
+    end
+
+    local Button = Instance.new("TextButton")
+    Button.Parent = parent
+    Button.Size = UDim2.new(0.8, 0, 0.1, 0)
+    Button.Position = UDim2.new(0.1, 0, 0.15 + (positionIndex * 0.12), 0)
+    Button.Text = buttonText
+    Button.Font = Enum.Font.GothamBold
+    Button.TextScaled = true
+    Button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Button.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+
+    -- Smooth Corners
+    local ButtonCorner = Instance.new("UICorner")
+    ButtonCorner.CornerRadius = UDim.new(0, 12)
+    ButtonCorner.Parent = Button
+
+    -- Hover Animation
+    Button.MouseEnter:Connect(function()
+        Button.BackgroundColor3 = Color3.fromRGB(50, 50, 50) -- Darker color on hover
+    end)
+    Button.MouseLeave:Connect(function()
+        Button.BackgroundColor3 = Color3.fromRGB(30, 30, 30) -- Reset color
+    end)
+
+    -- Click Animation
+    Button.MouseButton1Click:Connect(function()
+        Button.Size = UDim2.new(0.75, 0, 0.095, 0) -- Slight shrink effect
+        wait(0.05)
+        Button.Size = UDim2.new(0.8, 0, 0.1, 0) -- Restore size
+        callback()
+    end)
+
+    return Button
+end
+
+-- Setup UI with SmoothLib
+local function initializeScript()
+    print("SmoothLib UI system successfully integrated! 🚀")
+
+    -- Play Cinematic Intro
+    SmoothLib:CreateIntroScreen()
+
+    -- UI Setup (Runs after intro)
+    task.wait(3)  -- Delay before showing main UI
+    local Window = SmoothLib:CreateWindow("XC Elite Hub - Crafted by Cody & Selling")
+
+    -- Feature Buttons with animations
+    SmoothLib:CreateButton(Window, "Activate Supreme Speed", function() print("Speed Activated!") end, 0)
+    SmoothLib:CreateButton(Window, "Auto Punch All Rocks", function() print("Auto Punch Started!") end, 1)
+    SmoothLib:CreateButton(Window, "Infinite Jump", function() print("Infinite Jump Enabled!") end, 2)
+    SmoothLib:CreateButton(Window, "Enable God Mode", function() print("God Mode Activated!") end, 3)
+end
+
+-- Start Script Immediately
+initializeScript()
